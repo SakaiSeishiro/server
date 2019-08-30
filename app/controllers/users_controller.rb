@@ -12,11 +12,7 @@ class UsersController < ApplicationController
         password = user_params[:password]
         secure_password = password.crypt("secretkey")
         @user = User.create(user_params.merge(password: secure_pass(password), image_name: "default_user.jpg"))
-        if @user.save
-            render :json => @user 
-        else 
-            render :create 
-        end 
+        redirect_to 'http://localhost:3000/posts'
     end
 
     def update
@@ -26,12 +22,8 @@ class UsersController < ApplicationController
             image = params[:image]
             File.binwrite("public/user_image/#{@user.image_name}", image.read)
         end
-
-        if @user.update(user_params)
-            render :update
-        else
-            render :update
-        end
+        @user.update(user_params)
+        redirect_to 'http://localhost:3000/posts'
     end
 
     def destroy
@@ -45,12 +37,9 @@ class UsersController < ApplicationController
     def login
         @user = User.find_by(user_name: params[:user_name], password: params[:password])
         if @user
-          redirect_to("/posts/index")
+            redirect_to 'http://localhost:3000/posts'
         else
-            @error_message = "ユーザーネームまたはパスワードが間違っています"
-            @user_name = params[:user_name]
-            @password = params[:password]
-            render("users/login")        
+            redirect_to 'http://localhost:3000/login'
         end
     end
 
